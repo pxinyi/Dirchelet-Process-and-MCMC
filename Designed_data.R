@@ -1,7 +1,9 @@
-# fake data
+# fake data ----- the data is designed to verify the MCMC process in iteration.R
 
+# the distance object here controls the how spread out the clusters and the large distance, the more spread out  
 distance=5
 
+# set the center of clusters
 mu1=c(-5,2)*distance
 mu2=c(3,5)*distance
 mu3=c(-2,1)*distance
@@ -9,6 +11,7 @@ mu4=c(0,4)*distance
 mu5=c(-2.5,-1)*distance
 mu6=c(1.3,3)*distance
 
+# set the corvariance matrix
 sigma1=matrix(c(4,0.4,0.4,1),ncol = 2)
 sigma2=matrix(c(1.5,0.3,0.3,4),ncol = 2)
 sigma3=matrix(c(3,-0.2,-0.2,2.5),ncol = 2)
@@ -17,6 +20,7 @@ sigma5=matrix(c(8,-3.8,-3.8,3),ncol = 2)
 sigma6=matrix(c(5.6,3.9,3.9,4.4),ncol = 2)
 
 
+# generate data for each cluster based on the random sample size
 sample_size=sample(20:100,1)
 s1=mvrnorm(sample_size,mu1,sigma1)
 df1=data.frame(s1)
@@ -47,9 +51,13 @@ s6=mvrnorm(sample_size,mu6,sigma6)
 df6=data.frame(s6)
 df6$C=6
 
+
+
+# create the fake data as dataframe
 fakedatal=list(df1,df2,df3,df4,df5,df6)
 fakedata=do.call(rbind, fakedatal)
 colnames(fakedata)=c("x1","x2","C")
+
 
 
 pdf(file = "My Plot_5.pdf",   # The directory you want to save the file in
