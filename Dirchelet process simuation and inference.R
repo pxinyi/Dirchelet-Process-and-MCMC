@@ -55,7 +55,7 @@ lambda=0.1
 
 
 
-#generating a sample from G0
+# generating a sample from G0
 generate_location_process=function(){      
     Sigma_sample1=matrix(rInvWishart(n=1, df=nu, Sigma=Chi),ncol = 2,byrow = TRUE)
     mu_sample1=mvrnorm(1,mu0,Sigma_sample1/lambda)
@@ -63,7 +63,7 @@ generate_location_process=function(){
 }
 
 
-#generating weights and locations
+# generating weights and locations
 stick_breaking_process = function(num_weights, alpha) { 
     betas = rbeta(num_weights, 1, alpha)
     remaining_stick_lengths = c(1, cumprod(1 - betas))[1:num_weights]
@@ -75,14 +75,14 @@ G_weights=stick_breaking_process(max_num_weights,alpha)
 
 
 
-#generating the index vector C
+# generating the index vector C
 num_observation=200
 C1=sample.int(length(G_weights), size = num_observation, replace =TRUE, prob = G_weights)
 temp1=unique(C1)
 num_clusters=length(temp1)
 
 
-#generate data accordingly
+# generate data accordingly
 datalist=list() # list of dataframes
 true_mu=list()
 true_sig=list()
