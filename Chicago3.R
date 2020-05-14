@@ -1,11 +1,10 @@
-# load the HOMICIDE crime between year 2012 and 2017
+# load the HOMICIDE crime between year 2012 and 2017 and get the location information
 HOMICIDE=read.csv(file = "Crimes_HOMICIDE.csv")
-
-
 data=data.frame(HOMICIDE[,c("Latitude","Longitude")])
-colnames(data)=c("x1","x2")            
+colnames(data)=c("x1","x2") 
 
-# Rescale the data
+
+# Rescale the data and plot distribution
 library(scales)
 data=data.frame(Chicago_given)
 data$x1=rescale(Chicago_given$x1,to=c(-1,1))
@@ -16,7 +15,9 @@ ggplot(data=data)+
 
 
 
-# large alphe in order to allow more clusters
+
+
+# large alpha in order to allow more clusters, other parameters come from the artilce
 alpha=10
 p=2
 nu=4
@@ -26,6 +27,9 @@ lambda=0.1
 
 
 
+
+
+# initialization of MCMC
 X=data
 theta_mu=list()
 theta_sig=list()
@@ -41,6 +45,7 @@ m=sapply(1:Num_clusters, FUN=function(i) {dmvnorm(x=X, mean =theta_mu[[i]], sigm
 logxi_M=data.frame(matrix(m,byrow=FALSE,nrow = dim(X)[1]))
 
 
+# design the predicted dataset with 100*100 grid points
 xrange=seq(min(data$x1),max(data$x1),length.out = 100)
 yrange=seq(min(data$x2),max(data$x2),length.out = 100)
 pre_data1=rep(xrange,times=length(yrange))
@@ -48,12 +53,14 @@ pre_data2=rep(yrange,each=length(xrange))
 pre_data=cbind(pre_data1,pre_data2)
 
 
-
+# set the Number of iterations, burn-in samples and slice parameters 
 Num_iteration=500
 Num_cut=Num_iteration*0.2
 Num_slice=10
 Num_trace=floor((Num_iteration-Num_cut)/Num_slice)
 
+
+# create objects to store the information along the MCMC iteration
 C_trace=matrix(NA,nrow = Num_iteration,ncol = dim(X)[1])
 NumClusters_trace=rep(0,Num_iteration)
 mu_trace=matrix(NA,nrow=Num_iteration,ncol=200)
@@ -61,6 +68,7 @@ sigma_trace=matrix(NA,nrow=Num_iteration,ncol=400)
 pre_marginal_trace=matrix(NA,nrow=Num_trace,ncol=dim(pre_data)[1])
 
 
+# MCMC procedure----Notice that the predicted-posterior denisty is computed for each predicted data along the MCMC iteration.
 temp=mciter(C,NC,Num_clusters,theta_mu,theta_sig,logxi_M)
 j=1
 for(i in 1:Num_iteration){
@@ -87,7 +95,7 @@ for(i in 1:Num_iteration){
 
 
 
-
+# compute the marginal density for each predicted data and add the ecillpse representing all clusters covariance matrix
 pre_marginal=apply(pre_marginal_trace, 2, sum)
 iter=500
 df <- data.frame("x"=pre_data1,"y"=pre_data2,"z"=pre_marginal)
@@ -96,14 +104,14 @@ sigmadf=data.frame(matrix(sigma_trace[iter,1:(4*NumClusters_trace[iter])],ncol =
 ecidf=simulation(Num_clusters=NumClusters_trace[iter],Mu=mu_trace[iter,],Sigma=sigma_trace[iter,],Num_simu=100)
 
 
-
-
-
+# plot the contour plot and the dataset
 ggplot(data, aes(x = data$x1, y = data$x2))+
     geom_point(colour = "black",size=1,alpha=0.6)+
     stat_contour(data=df,geom="polygon",aes(x=x,y=y,z=z,fill=stat(level)),alpha=0.5)+
     scale_fill_distiller(palette = "Spectral", direction = -1)
 
+
+# plot all information
 ggplot(data, aes(x = data$x1, y = data$x2))+
     geom_point(aes(shape= as.factor(C_trace[iter,]),colour = as.factor(C_trace[iter,])),size=1,alpha=0.6)+
     scale_shape_manual(values=(1:25))+
@@ -114,6 +122,8 @@ ggplot(data, aes(x = data$x1, y = data$x2))+
     ggtitle("final cluster assignments and post-predicted density contour plot")
 
 
+
+# another way to plot the contour plot with more clear lines.
 library(plotly)
 contour_range= list(end = max(df$z), size =10, start = min(df$z),showlabels = TRUE,coloring = 'heatmap')
 fig <- plot_ly(
