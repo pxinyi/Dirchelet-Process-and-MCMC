@@ -1,6 +1,6 @@
 # Dirchelet-Process-and-MCMC
 
-This folder target at the simulation and inference of direchlet mixed guassian model.
+This folders target at the simulation and inference of direchlet mixed guassian model.
 
 The Normal-inverse-Wishart distribution is used as the prior and the data is located in Rˆ2 with determined parameters. 
 The standard Gibbs sampling method in the article is used for inference.
