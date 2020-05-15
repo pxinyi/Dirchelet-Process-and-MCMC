@@ -20,5 +20,7 @@ The designed_data.R file includes the designed data with 6 clusters and their di
 
 The Chicago****.R file includes the subsets of Chicago crime data and their predicted posterior contour plot.
 
-
+The match_cluster.R file switches the labels of clusters in each iteration based on the pairwise L2 distance in cluster centers between 
+current iteration and previous iteration. Denote
+$\alpha$
 
