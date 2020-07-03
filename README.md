@@ -16,8 +16,6 @@ The function.R file includes all the function needed for Gibbs sampling iteratio
 
 The iteration.R file includes the predicted data designed, iteration process and the plots of MCMC results.
 
-The designed_data.R file includes the designed data with 6 clusters and their distance can be changed.
-
 The Chicago****.R file includes the subsets of Chicago crime data and their predicted posterior contour plot.
 
 
